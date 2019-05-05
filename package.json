@@ -1,12 +1,19 @@
 {
-  "name": "saldo.malt.no",
-  "version": "1.0.0",
+  "name": "saldo-api",
+  "version": "0.2.1",
   "description": "A simple api backend to provide some bank account information",
-  "main": "index.js",
+  "main": "src/index.js",
   "author": "Thomas Malt <thomas@malt.no>",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.4.2",
+    "express": "^4.16.4",
+    "express-winston": "^3.1.0",
     "node-sbanken": "https://github.com/tfmalt/node-sbanken.git",
-    "prettier": "^1.17.0"
+    "prettier": "^1.17.0",
+    "winston": "^3.2.1"
+  },
+  "scripts": {
+    "start": "node ./src/index.js"
   }
 }
