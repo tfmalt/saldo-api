@@ -1,0 +1,12 @@
+{
+  "name": "saldo.malt.no",
+  "version": "1.0.0",
+  "description": "A simple api backend to provide some bank account information",
+  "main": "index.js",
+  "author": "Thomas Malt <thomas@malt.no>",
+  "license": "MIT",
+  "dependencies": {
+    "node-sbanken": "https://github.com/tfmalt/node-sbanken.git",
+    "prettier": "^1.17.0"
+  }
+}
