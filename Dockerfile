@@ -1,4 +1,4 @@
-FROM node:lts
+FROM node:11
 LABEL maintainer="thomas@malt.no"
 
 # USER node

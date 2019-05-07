@@ -38,9 +38,13 @@ const app = express();
 app.use(logger);
 app.disable('x-powered-by');
 
-minilog.info('Initalizing sbanken object');
-minilog.debug('Users:', JSON.stringify(users));
+minilog.info(
+  chalk`Starting {cyan ${name}} version {cyan ${version}} by {yellow ${author}}`
+);
+minilog.debug('Loaded users:');
+Object.keys(users).forEach(user => minilog.debug(`  - ${user}`));
 
+minilog.info('Initalizing sbanken object');
 if (
   !process.env.SBANKEN_CLIENTID ||
   !process.env.SBANKEN_SECRET ||
@@ -116,7 +120,5 @@ app.use((req, res, next) => {
 });
 
 app.listen(port, host, () => {
-  minilog.info(
-    chalk`Server {cyan ${name}} version {cyan ${version}} by {yellow ${author}} running on port {cyan ${port}}`
-  );
+  minilog.info('Server Running. Waiting for connections...');
 });
