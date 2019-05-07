@@ -1,12 +1,13 @@
 FROM node:lts
 LABEL maintainer="thomas@malt.no"
 
-USER node
+# USER node
 WORKDIR /usr/src/saldo
-COPY package*.json ./
+COPY . /usr/src/saldo
 
 RUN npm install
+# RUN chown -R node /usr/src/saldo
 
 EXPOSE 3000
 
-CMD [npm, start]
+CMD ["npm", "start"]

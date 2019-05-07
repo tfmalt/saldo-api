@@ -2,9 +2,14 @@
   "name": "saldo-api",
   "version": "0.2.2",
   "description": "A simple api backend to provide some bank account information",
-  "main": "src/index.js",
+  "main": "./src/index.js",
   "author": "Thomas Malt <thomas@malt.no>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tfmalt/saldo-api.git"
+  },
+
   "dependencies": {
     "chalk": "^2.4.2",
     "express": "^4.16.4",
