@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:lts
 LABEL maintainer="thomas@malt.no"
 
 USER node
