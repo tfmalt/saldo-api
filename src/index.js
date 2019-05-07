@@ -4,7 +4,11 @@ const expressWinston = require('express-winston');
 const Sbanken = require('node-sbanken');
 const users = require('./users');
 const minilog = require('./minilog');
+const chalk = require('chalk');
 
+const { name, version, author } = require('../package');
+const port = process.env.PORT || 3000;
+const host = '0.0.0.0';
 const logger = expressWinston.logger({
   transports: [new winston.transports.Console()],
   format: winston.format.combine(
@@ -28,8 +32,8 @@ const logger = expressWinston.logger({
   //   return false;
   // }, // optional: allows to skip some log messages based on request and/or response
 });
+
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(logger);
 app.disable('x-powered-by');
@@ -111,6 +115,8 @@ app.use((req, res, next) => {
     .end();
 });
 
-app.listen(port, () => {
-  minilog.info(`Starting app: port ${port}`);
+app.listen(port, host, () => {
+  minilog.info(
+    chalk`Server {cyan ${name}} version {cyan ${version}} by {yellow ${author}} running on port {cyan ${port}}`
+  );
 });
