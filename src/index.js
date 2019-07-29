@@ -41,10 +41,7 @@ app.disable('x-powered-by');
 minilog.info(
   chalk`Starting {cyan ${name}} version {cyan ${version}} by {yellow ${author}}`
 );
-minilog.debug('Loaded users:');
-Object.keys(users).forEach(user => minilog.debug(`  - ${user}`));
 
-minilog.info('Initalizing sbanken object');
 if (
   !process.env.SBANKEN_CLIENTID ||
   !process.env.SBANKEN_SECRET ||
@@ -62,6 +59,13 @@ const sbanken = new Sbanken(
   },
   { verbose: true }
 );
+
+minilog.info(
+  chalk`Initalized {cyan Sbanken SDK} version {cyan ${sbanken.version}}`
+);
+
+minilog.debug('Loaded users:');
+Object.keys(users).forEach(user => minilog.debug(`  - ${user}`));
 
 app.get('/', (req, res) => {
   res.json({ message: 'hello world' });

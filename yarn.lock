@@ -432,8 +432,8 @@ node-fetch@^2.5.0:
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
 
 "node-sbanken@https://github.com/tfmalt/node-sbanken.git":
-  version "0.6.1"
-  resolved "https://github.com/tfmalt/node-sbanken.git#69cb78d25e4e3fd7a737e1f7e3d844e853b35f7c"
+  version "0.6.2"
+  resolved "https://github.com/tfmalt/node-sbanken.git#ba10d9304c4b8e420d23d294d9920122ad4616fe"
   dependencies:
     btoa "^1.2.1"
     chalk "^2.4.2"
