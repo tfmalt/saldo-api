@@ -1,8 +1,10 @@
 const express = require('express');
+const helmet = require('helmet');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const Sbanken = require('node-sbanken');
 const users = require('./users');
+const apikeys = require('./apikeys');
 const minilog = require('./minilog');
 const chalk = require('chalk');
 
@@ -35,7 +37,9 @@ const logger = expressWinston.logger({
 
 const app = express();
 
+app.use(helmet());
 app.use(logger);
+app.use(apikeys);
 app.disable('x-powered-by');
 
 minilog.info(
@@ -65,7 +69,7 @@ minilog.info(
 );
 
 minilog.debug('Loaded users:');
-Object.keys(users).forEach(user => minilog.debug(`  - ${user}`));
+Object.keys(users).forEach((user) => minilog.debug(`  - ${user}`));
 
 app.get('/', (req, res) => {
   res.json({ message: 'hello world' });
@@ -92,27 +96,49 @@ app.get('/balance', (req, res) => {
 
   sbanken
     .accounts()
-    .then(data => {
-      return data.items.filter(i => i.name.match(users[user].filter));
+    .then((data) => {
+      return data.items.filter((i) => i.name.match(users[user].filter));
     })
-    .then(data => {
-      return data.map(i => {
+    .then((data) => {
+      return data.map((i) => {
         delete i.ownerCustomerId;
         delete i.creditLimit;
         return i;
       });
     })
-    .then(data => {
+    .then((data) => {
       res.json(data).end();
     });
 });
-// console.log(sbanken);
 
 app.get('/transactions/:account', (req, res) => {
   const account = req.params.account;
 
-  sbanken.accounts;
+  console.log('params:', req.params);
+  console.log('query', req.query);
+  console.log('account:', account);
+  const options = {
+    accountId: '92C360DADDEE5CD09A3906B4ABCC05D9',
+    from: req.query.hasOwnProperty('from')
+      ? new Date(req.query.from)
+      : new Date(),
+    to: req.query.hasOwnProperty('to') ? new Date(req.query.to) : new Date(),
+  };
+
+  sbanken
+    .transactions(options)
+    .then((data) => {
+      res.status(200).json(data).end();
+    })
+    .catch((err) => {
+      console.log('got error:', err);
+      res
+        .status(400)
+        .json({ error: 'Bad Request', message: 'This was a bad request' })
+        .end();
+    });
 });
+
 /**
  * default route
  */
@@ -124,5 +150,7 @@ app.use((req, res, next) => {
 });
 
 app.listen(port, host, () => {
-  minilog.info('Server Running. Waiting for connections...');
+  minilog.info(
+    chalk`Server Running: {yellow http://${host}:${port}}. Waiting for connections...`
+  );
 });
