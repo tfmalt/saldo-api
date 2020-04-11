@@ -1,6 +1,6 @@
 {
   "name": "saldo-api",
-  "version": "1.1.2",
+  "version": "1.2.3",
   "description": "A simple api backend to provide some bank account information",
   "main": "./src/index.js",
   "author": "Thomas Malt <thomas@malt.no>",
@@ -10,11 +10,12 @@
     "url": "https://github.com/tfmalt/saldo-api.git"
   },
   "dependencies": {
-    "chalk": "^2.4.2",
+    "chalk": "^4.0.0",
     "express": "^4.16.4",
-    "express-winston": "^3.1.0",
+    "express-winston": "^4.0.3",
+    "helmet": "^3.22.0",
     "node-sbanken": "https://github.com/tfmalt/node-sbanken.git",
-    "prettier": "^1.17.0",
+    "prettier": "^2.0.4",
     "winston": "^3.2.1"
   },
   "scripts": {
