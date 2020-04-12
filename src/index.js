@@ -3,7 +3,7 @@ const helmet = require('helmet');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const Sbanken = require('node-sbanken');
-const users = require('./users');
+const { users, accounts } = require('./config');
 const apikeys = require('./apikeys');
 const minilog = require('./minilog');
 const chalk = require('chalk');
@@ -29,7 +29,7 @@ const logger = expressWinston.logger({
   expressFormat: true,
   // Color the text and status code, using the Express/morgan color palette
   // (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-  colorize: false,
+  colorize: false
   // ignoreRoute: function(req, res) {
   //   return false;
   // }, // optional: allows to skip some log messages based on request and/or response
@@ -59,7 +59,7 @@ const sbanken = new Sbanken(
   {
     clientId: process.env.SBANKEN_CLIENTID,
     secret: process.env.SBANKEN_SECRET,
-    userId: process.env.SBANKEN_USERID,
+    userId: process.env.SBANKEN_USERID
   },
   { verbose: true }
 );
@@ -75,10 +75,17 @@ app.get('/', (req, res) => {
   res.json({ message: 'hello world' });
 });
 
-function handleBadRequest(req, res) {
+function handleBadRequest(res, message = 'This was a bad request') {
+  return res.status(400).json({ error: 'Bad Request', message }).end();
+}
+
+function handleServerError(res) {
   return res
-    .status(400)
-    .json({ error: 'Bad Request', message: 'This was a bad request' })
+    .status(502)
+    .json({
+      error: 'Bad Gateway',
+      message: 'A result from an upstream server returned an invalid response'
+    })
     .end();
 }
 
@@ -95,7 +102,7 @@ app.get('/balance', (req, res) => {
       .status(400)
       .json({
         error: 'Wrong or Missing header',
-        message: 'The X-Consumer-Username header must be set correctly',
+        message: 'The X-Consumer-Username header must be set correctly'
       })
       .end();
     return;
@@ -130,37 +137,57 @@ app.get('/transactions/:account', async (req, res) => {
   console.log('account:', account);
 
   if (account !== 'felles') {
-    return handleBadRequest(req, res);
+    return handleBadRequest(res, 'Invalid parameter passed in URL');
   }
 
-  const felles = [
-    '390BB04482D935E849B63F38B3A70B51', // felles brukskonto
-    '92C360DADDEE5CD09A3906B4ABCC05D9', // visa kredittkort
-    '7F79CB42E93391536AC90B9499FAF2D8', // felles brukskonto
-    '56AF698C5521D8D61DBF4D60C420762D', // felles regningskonto
-  ];
-
   const options = {
-    accountId: null,
     from: req.query.hasOwnProperty('from')
       ? new Date(req.query.from)
       : new Date(),
-    to: req.query.hasOwnProperty('to') ? new Date(req.query.to) : new Date(),
+    to: req.query.hasOwnProperty('to') ? new Date(req.query.to) : new Date()
   };
 
-  const transactions = felles.map((id) => {
-    options.accountId = id;
-    console.log('options:', options, 'id:', id);
-    const data = (async () => {
-      const data = await sbanken.transactions(options);
-      return data;
-    })();
+  if (options.to > new Date()) {
+    return handleBadRequest(res, 'To date cannot be greater than todays date');
+  }
 
-    return data;
+  try {
+    const data = {
+      version,
+      name,
+      transactions: account,
+      options,
+      items: (await getTransactions(options))
+        .flat()
+        .sort((a, b) =>
+          new Date(a.accountingDate) > new Date(b.accountingDate) ? 1 : -1
+        )
+    };
+
+    res.status(200).json(data).end();
+  } catch (err) {
+    handleServerError(res);
+  }
+});
+
+async function getTransactions(options) {
+  const accountlist = (await sbanken.accounts()).items;
+  const result = accounts.felles.map(async (id) => {
+    const data = await sbanken.transactions({
+      accountId: id,
+      from: options.from,
+      to: options.to
+    });
+
+    //
+    return data.items.map((t) => {
+      t.accountName = accountlist.find((i) => i.accountId === id).name;
+      return t;
+    });
   });
 
-  res.status(200).json(transactions).end();
-});
+  return Promise.all(result);
+}
 
 /**
  * default route

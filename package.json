@@ -1,6 +1,6 @@
 {
   "name": "saldo-api",
-  "version": "1.2.3",
+  "version": "1.2.5",
   "description": "A simple api backend to provide some bank account information",
   "main": "./src/index.js",
   "author": "Thomas Malt <thomas@malt.no>",
