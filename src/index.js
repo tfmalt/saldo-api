@@ -75,6 +75,13 @@ app.get('/', (req, res) => {
   res.json({ message: 'hello world' });
 });
 
+function handleBadRequest(req, res) {
+  return res
+    .status(400)
+    .json({ error: 'Bad Request', message: 'This was a bad request' })
+    .end();
+}
+
 /**
  * Fetching the balance from the accounts for a user.
  */
@@ -111,32 +118,48 @@ app.get('/balance', (req, res) => {
     });
 });
 
-app.get('/transactions/:account', (req, res) => {
+/**
+ * Endpoint to fetch transactions for a give account - or set of accounts
+ * Will not work with any account id.
+ */
+app.get('/transactions/:account', async (req, res) => {
   const account = req.params.account;
 
   console.log('params:', req.params);
   console.log('query', req.query);
   console.log('account:', account);
+
+  if (account !== 'felles') {
+    return handleBadRequest(req, res);
+  }
+
+  const felles = [
+    '390BB04482D935E849B63F38B3A70B51', // felles brukskonto
+    '92C360DADDEE5CD09A3906B4ABCC05D9', // visa kredittkort
+    '7F79CB42E93391536AC90B9499FAF2D8', // felles brukskonto
+    '56AF698C5521D8D61DBF4D60C420762D', // felles regningskonto
+  ];
+
   const options = {
-    accountId: '92C360DADDEE5CD09A3906B4ABCC05D9',
+    accountId: null,
     from: req.query.hasOwnProperty('from')
       ? new Date(req.query.from)
       : new Date(),
     to: req.query.hasOwnProperty('to') ? new Date(req.query.to) : new Date(),
   };
 
-  sbanken
-    .transactions(options)
-    .then((data) => {
-      res.status(200).json(data).end();
-    })
-    .catch((err) => {
-      console.log('got error:', err);
-      res
-        .status(400)
-        .json({ error: 'Bad Request', message: 'This was a bad request' })
-        .end();
-    });
+  const transactions = felles.map((id) => {
+    options.accountId = id;
+    console.log('options:', options, 'id:', id);
+    const data = (async () => {
+      const data = await sbanken.transactions(options);
+      return data;
+    })();
+
+    return data;
+  });
+
+  res.status(200).json(transactions).end();
 });
 
 /**
