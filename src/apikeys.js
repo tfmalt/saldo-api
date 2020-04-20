@@ -7,6 +7,7 @@ const { keys } = require('./config');
 
 function unauthorized(res) {
   return res
+    .set('Access-Control-Allow-Origin', '*')
     .status(401)
     .json({
       error: 'Unauthorized',
@@ -16,11 +17,18 @@ function unauthorized(res) {
 }
 
 module.exports = (req, res, next) => {
-  if (!req.headers.hasOwnProperty('authorization')) {
-    return unauthorized(res);
+  if (req.method === 'OPTIONS') {
+    return next();
   }
 
-  const token = req.headers.authorization.split(' ')[1];
+  let token = '';
+  if (req.headers.hasOwnProperty('authorization')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  if (req.query.hasOwnProperty('apikey')) {
+    token = req.query.apikey;
+  }
+
   console.log('token:', token);
 
   if (keys.includes(token)) {

@@ -1,9 +1,10 @@
 const express = require('express');
 const helmet = require('helmet');
 const winston = require('winston');
+const cors = require('cors');
 const expressWinston = require('express-winston');
 const Sbanken = require('node-sbanken');
-const { users, accounts } = require('./config');
+const { users, accounts, expenseKey } = require('./config');
 const apikeys = require('./apikeys');
 const minilog = require('./minilog');
 const chalk = require('chalk');
@@ -88,6 +89,19 @@ function handleServerError(res) {
     })
     .end();
 }
+
+app.options('/budget/expenses', cors());
+
+app.get('/budget/expenses', cors(), (req, res) => {
+  return res
+    .set(
+      'Location',
+      `https://script.google.com/macros/s/AKfycbyL4WsxNK-88L1cdvmgruVaLXFyndHkOlSpLK9ZWFjMuf-YUewd/exec?y=${req.query.y}&m=${req.query.m}&apikey=${expenseKey}`
+    )
+    .set('Access-Control-Allow-Origin', '*')
+    .status(302)
+    .end();
+});
 
 /**
  * Fetching the balance from the accounts for a user.
