@@ -17,23 +17,11 @@ const logger = expressWinston.logger({
   format: winston.format.combine(
     winston.format.colorize(),
     winston.format.cli()
-    // winston.format.json()
   ),
-  // optional: control whether you want to log the meta data about the
-  // request (default to true)
   meta: true,
-  // optional: customize the default logging message. E.g.
-  // "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
   msg: 'HTTP {{req.method}} {{req.url}} {{req.headers}}',
-  // Use the default Express/morgan request formatting. Enabling this will
-  // override any msg if true. Will only output colors with colorize set to true
   expressFormat: true,
-  // Color the text and status code, using the Express/morgan color palette
-  // (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
   colorize: false
-  // ignoreRoute: function(req, res) {
-  //   return false;
-  // }, // optional: allows to skip some log messages based on request and/or response
 });
 
 const app = express();
@@ -90,13 +78,15 @@ function handleServerError(res) {
     .end();
 }
 
+/**
+ * API endpoint for routing to the budget expenses api.
+ */
 app.options('/budget/expenses', cors());
-
 app.get('/budget/expenses', cors(), (req, res) => {
   return res
     .set(
       'Location',
-      `https://script.google.com/macros/s/AKfycbyL4WsxNK-88L1cdvmgruVaLXFyndHkOlSpLK9ZWFjMuf-YUewd/exec?y=${req.query.y}&m=${req.query.m}&apikey=${expenseKey}`
+      `${expenses.url}?y=${req.query.y}&m=${req.query.m}&apikey=${expenses.key}`
     )
     .set('Access-Control-Allow-Origin', '*')
     .status(302)

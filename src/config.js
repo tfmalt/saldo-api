@@ -12,5 +12,8 @@ module.exports = {
   accounts: {
     // add accounts you want to fetch here.
   },
-  expenseKey: 'expense_key'
+  expenses: {
+    key: 'expense_key',
+    url: 'expense_url'
+  }
 };
