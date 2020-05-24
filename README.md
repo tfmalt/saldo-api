@@ -15,6 +15,6 @@ It uses my other repository [node-sbanken](https://github.com/tfmalt/node-sbanke
 
 The API Client is intended to be run as a docker container.
 
-"""
+```
 docker run
-"""
+```
