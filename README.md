@@ -16,5 +16,5 @@ It uses my other repository [node-sbanken](https://github.com/tfmalt/node-sbanke
 The API Client is intended to be run as a docker container.
 
 ```
-docker run
+docker run -d -e SBANKEN_CLIENTID=$SBANKEN_CLIENTID -e SBANKEN_USERID=$SBANKEN_USERID -e SBANKEN_SECRET=$SBANKEN_SECRET --restart=unless-stopped --name saldo-api -p 3030:3000 tfmalt/saldo-api
 ```
