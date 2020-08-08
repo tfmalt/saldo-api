@@ -141,9 +141,6 @@ app.get('/transactions/:account', async (req, res) => {
     return handleBadRequest(res, 'To date cannot be greater than todays date');
   }
 
-  const transactions = await getTransactions(options);
-  transactions.flat;
-
   try {
     const data = {
       version,
