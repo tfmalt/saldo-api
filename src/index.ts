@@ -1,13 +1,13 @@
-const express = require('express');
-const helmet = require('helmet');
-const winston = require('winston');
-const cors = require('cors');
-const expressWinston = require('express-winston');
-const Sbanken = require('node-sbanken');
-const { users, accounts, expenses } = require('./config');
-const apikeys = require('./apikeys');
-const minilog = require('./minilog');
-const chalk = require('chalk');
+import express from 'express';
+import helmet from 'helmet';
+import winston from 'winston';
+import cors from 'cors';
+import expressWinston from 'express-winston';
+import Sbanken from 'node-sbanken';
+import { users, accounts, expenses } from './config';
+import apikeys from './apikeys';
+import minilog from './minilog';
+import chalk from 'chalk';
 
 const { name, version, author } = require('../package');
 const port = process.env.PORT || 3000;
@@ -146,9 +146,9 @@ app.get('/transactions/:account', async (req, res) => {
 
   const options = {
     from: req.query.hasOwnProperty('from')
-      ? new Date(req.query.from)
+      ? new Date(req.query.from as string)
       : new Date(),
-    to: req.query.hasOwnProperty('to') ? new Date(req.query.to) : new Date()
+    to: req.query.hasOwnProperty('to') ? new Date(req.query.to as string) : new Date()
   };
 
   if (options.to > new Date()) {
