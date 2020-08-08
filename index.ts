@@ -3,21 +3,21 @@ import helmet from 'helmet';
 import winston from 'winston';
 import cors from 'cors';
 import expressWinston from 'express-winston';
-import Sbanken from 'node-sbanken';
-import { users, accounts, expenses } from './config';
-import apikeys from './apikeys';
-import minilog from './minilog';
+import * as sb from 'node-sbanken';
+import { users, accounts, expenses } from './lib/config';
+import apikeys from './lib/apikeys';
+import minilog from './lib/minilog';
 import chalk from 'chalk';
 
-const { name, version, author } = require('../package');
-const port = process.env.PORT || 3000;
+import { name, version, author } from './package.json';
+import { Response } from 'express-serve-static-core';
+import { Transaction } from 'node-sbanken';
+
+const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
 const logger = expressWinston.logger({
   transports: [new winston.transports.Console()],
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.cli()
-  ),
+  format: winston.format.combine(winston.format.colorize(), winston.format.cli()),
   meta: true,
   msg: 'HTTP {{req.method}} {{req.url}} {{req.headers}}',
   expressFormat: true,
@@ -31,20 +31,14 @@ app.use(logger);
 app.use(apikeys);
 app.disable('x-powered-by');
 
-minilog.info(
-  chalk`Starting {cyan ${name}} version {cyan ${version}} by {yellow ${author}}`
-);
+minilog.info(chalk`Starting {cyan ${name}} version {cyan ${version}} by {yellow ${author}}`);
 
-if (
-  !process.env.SBANKEN_CLIENTID ||
-  !process.env.SBANKEN_SECRET ||
-  !process.env.SBANKEN_USERID
-) {
+if (!process.env.SBANKEN_CLIENTID || !process.env.SBANKEN_SECRET || !process.env.SBANKEN_USERID) {
   minilog.error('sbanken credentials not configured properly. exiting.');
   process.exit(0);
 }
 
-const sbanken = new Sbanken(
+const sbanken = new sb.Sbanken(
   {
     clientId: process.env.SBANKEN_CLIENTID,
     secret: process.env.SBANKEN_SECRET,
@@ -53,9 +47,7 @@ const sbanken = new Sbanken(
   { verbose: true }
 );
 
-minilog.info(
-  chalk`Initalized {cyan Sbanken SDK} version {cyan ${sbanken.version}}`
-);
+minilog.info(chalk`Initalized {cyan Sbanken SDK} version {cyan ${sbanken.version}}`);
 
 minilog.debug('Loaded users:');
 Object.keys(users).forEach((user) => minilog.debug(`  - ${user}`));
@@ -64,11 +56,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'hello world' });
 });
 
-function handleBadRequest(res, message = 'This was a bad request') {
+function handleBadRequest(res: Response, message = 'This was a bad request') {
   return res.status(400).json({ error: 'Bad Request', message }).end();
 }
 
-function handleServerError(res) {
+function handleServerError(res: Response) {
   return res
     .status(502)
     .json({
@@ -84,10 +76,7 @@ function handleServerError(res) {
 app.options('/budget/expenses', cors());
 app.get('/budget/expenses', cors(), (req, res) => {
   return res
-    .set(
-      'Location',
-      `${expenses.url}?y=${req.query.y}&m=${req.query.m}&apikey=${expenses.key}`
-    )
+    .set('Location', `${expenses.url}?y=${req.query.y}&m=${req.query.m}&apikey=${expenses.key}`)
     .set('Access-Control-Allow-Origin', '*')
     .status(302)
     .end();
@@ -97,10 +86,9 @@ app.get('/budget/expenses', cors(), (req, res) => {
  * Fetching the balance from the accounts for a user.
  */
 app.get('/balance', (req, res) => {
-  const user = req.headers['x-consumer-username'];
-  minilog.debug(req.headers);
+  const user = req.get('x-consumer-username');
 
-  if (!users.hasOwnProperty(user)) {
+  if (typeof user === 'undefined' || !users.hasOwnProperty(user)) {
     minilog.warn('400 missing x-consumer-username header');
     res
       .status(400)
@@ -145,15 +133,16 @@ app.get('/transactions/:account', async (req, res) => {
   }
 
   const options = {
-    from: req.query.hasOwnProperty('from')
-      ? new Date(req.query.from as string)
-      : new Date(),
+    from: req.query.hasOwnProperty('from') ? new Date(req.query.from as string) : new Date(),
     to: req.query.hasOwnProperty('to') ? new Date(req.query.to as string) : new Date()
   };
 
   if (options.to > new Date()) {
     return handleBadRequest(res, 'To date cannot be greater than todays date');
   }
+
+  const transactions = await getTransactions(options);
+  transactions.flat;
 
   try {
     const data = {
@@ -163,9 +152,7 @@ app.get('/transactions/:account', async (req, res) => {
       options,
       items: (await getTransactions(options))
         .flat()
-        .sort((a, b) =>
-          new Date(a.accountingDate) > new Date(b.accountingDate) ? 1 : -1
-        )
+        .sort((a, b) => (new Date(a.accountingDate) > new Date(b.accountingDate) ? 1 : -1))
     };
 
     res.status(200).json(data).end();
@@ -174,18 +161,18 @@ app.get('/transactions/:account', async (req, res) => {
   }
 });
 
-async function getTransactions(options) {
+async function getTransactions(options: { from: Date; to: Date }): Promise<any[]> {
   const accountlist = (await sbanken.accounts()).items;
-  const result = accounts.felles.map(async (id) => {
+  const result = accounts.felles.map(async (id: string) => {
     const data = await sbanken.transactions({
       accountId: id,
       from: options.from,
       to: options.to
     });
 
-    //
-    return data.items.map((t) => {
-      t.accountName = accountlist.find((i) => i.accountId === id).name;
+    return data.items.map((t: any): any => {
+      const account = accountlist.find((i: sb.Account) => i.accountId === id);
+      t.accountName = typeof account === 'undefined' ? '' : account.name;
       return t;
     });
   });
@@ -197,14 +184,9 @@ async function getTransactions(options) {
  * default route
  */
 app.use((req, res, next) => {
-  res
-    .status(404)
-    .json({ error: 'Not Found', message: 'This endpoint does not exist' })
-    .end();
+  res.status(404).json({ error: 'Not Found', message: 'This endpoint does not exist' }).end();
 });
 
 app.listen(port, host, () => {
-  minilog.info(
-    chalk`Server Running: {yellow http://${host}:${port}}. Waiting for connections...`
-  );
+  minilog.info(chalk`Server Running: {yellow http://${host}:${port}}. Waiting for connections...`);
 });

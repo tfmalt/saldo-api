@@ -2,7 +2,8 @@
   "name": "saldo-api",
   "version": "1.4.0",
   "description": "A simple api backend to provide some bank account information",
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "author": "Thomas Malt <thomas@malt.no>",
   "license": "MIT",
   "repository": {
@@ -20,13 +21,17 @@
     "winston": "^3.3.3"
   },
   "scripts": {
-    "start": "node ./src/index.js",
-    "test": "true"
+    "start": "npm run build && node ./dist/index.js",
+    "test": "true",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
     "@types/cors": "^2.8.7",
     "@types/express": "^4.17.7",
+    "@types/node-fetch": "^2.5.7",
     "@types/winston": "^2.4.4",
     "typescript": "^3.9.7"
   }

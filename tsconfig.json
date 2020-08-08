@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "es2019",
     "moduleResolution": "node",
     "declaration": true,
     "sourceMap": true,
@@ -11,7 +11,7 @@
     "strict": true,
     "removeComments": true
   },
-  "lib": ["es2015"],
-  "include": ["src/**/*"],
+  "lib": ["es2019"],
+  "include": ["index.ts", "./lib/**/*"],
   "exclude": ["node_modules"]
 }
