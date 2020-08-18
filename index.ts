@@ -11,7 +11,6 @@ import chalk from 'chalk';
 
 import { name, version, author } from './package.json';
 import { Response } from 'express-serve-static-core';
-import { Transaction } from 'node-sbanken';
 
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
@@ -33,7 +32,7 @@ app.disable('x-powered-by');
 
 minilog.info(chalk`Starting {cyan ${name}} version {cyan ${version}} by {yellow ${author}}`);
 
-if (!process.env.SBANKEN_CLIENTID || !process.env.SBANKEN_SECRET || !process.env.SBANKEN_USERID) {
+if (!process.env.SBANKEN_CLIENTID || !process.env.SBANKEN_SECRET || !process.env.SBANKEN_CUSTOMERID) {
   minilog.error('sbanken credentials not configured properly. exiting.');
   process.exit(0);
 }
@@ -42,7 +41,7 @@ const sbanken = new sb.Sbanken(
   {
     clientId: process.env.SBANKEN_CLIENTID,
     secret: process.env.SBANKEN_SECRET,
-    userId: process.env.SBANKEN_USERID
+    customerId: process.env.SBANKEN_CUSTOMERID
   },
   { verbose: true }
 );
