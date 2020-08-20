@@ -24,14 +24,10 @@ interface Config {
 const config: Config = {
   version,
   users: {
-    'martha@malt.no': { filter: new RegExp('marthas', 'ui') },
-    'edith@malt.no': { filter: new RegExp('ediths', 'ui') },
-    'thomas@malt.no': { filter: new RegExp('', 'ui') }
+    // Add users here"
   },
   keys: [
-    '// Add valid api keys here when running docker image',
-    '9d3f94a0912f06b10acaf6a92cb22d2bb49c69f3cf178f1ae7da403c',
-    'testing'
+    // Add valid api keys here when running docker image
   ],
   accounts: {
     felles: [
