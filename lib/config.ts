@@ -31,10 +31,7 @@ const config: Config = {
   ],
   accounts: {
     felles: [
-      '390BB04482D935E849B63F38B3A70B51', // felles brukskonto
-      '92C360DADDEE5CD09A3906B4ABCC05D9', // visa kredittkort
-      '7F79CB42E93391536AC90B9499FAF2D8', // felles brukskonto
-      '56AF698C5521D8D61DBF4D60C420762D' // felles regningskonto
+      // add account ids here
     ]
   },
   expenses: {
