@@ -1,0 +1,11 @@
+{
+  "users": [["user@example.org", "regular expression string"]],
+  "keys": ["Add valid api keys here"],
+  "accounts": {
+    "identifier": ["add account ids here"]
+  },
+  "expenses": {
+    "key": "key",
+    "url": "url"
+  }
+}
