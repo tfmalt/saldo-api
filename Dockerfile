@@ -3,10 +3,11 @@ LABEL maintainer="thomas@malt.no"
 
 # USER node
 WORKDIR /usr/src/saldo
-COPY . /usr/src/saldo
+COPY package.json .
 
 RUN npm install
-# RUN chown -R node /usr/src/saldo
+ADD . /usr/src/saldo
+RUN npm run build
 
 EXPOSE 3000
 
