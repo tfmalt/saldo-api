@@ -4,7 +4,7 @@ import winston from 'winston';
 import cors from 'cors';
 import expressWinston from 'express-winston';
 import * as sb from 'node-sbanken';
-import { users, accounts, expenses } from './lib/config';
+import { users, accounts, expenses } from './lib/Config';
 import apikeys from './lib/apikeys';
 import minilog from './lib/minilog';
 import chalk from 'chalk';
@@ -101,9 +101,7 @@ app.get('/balance', (req, res) => {
 
   sbanken
     .accounts()
-    .then((data) => {
-      return data.items.filter((i) => i.name.match(users[user].filter));
-    })
+    .then((data) => data.items.filter((i) => i.name.match(users[user])))
     .then((data) => {
       return data.map((i) => {
         delete i.ownerCustomerId;
