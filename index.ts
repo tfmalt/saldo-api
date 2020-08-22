@@ -148,8 +148,7 @@ app.get('/transactions/:account', async (req, res) => {
         .flat()
         .sort((a, b) => (new Date(a.accountingDate) > new Date(b.accountingDate) ? 1 : -1))
     };
-
-    res.status(200).json(data).end();
+    res.set('Cache-Control', 'public, max-age: 1200').status(200).json(data).end();
   } catch (err) {
     handleServerError(res);
   }
