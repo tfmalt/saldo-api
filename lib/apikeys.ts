@@ -18,9 +18,7 @@ function unauthorized(res: express.Response): void {
 }
 
 export default (req: express.Request, res: express.Response, next: express.NextFunction): void => {
-  if (req.method === 'OPTIONS') {
-    return next();
-  }
+  if (req.method === 'OPTIONS') return next();
 
   const token: string =
     typeof req.query.apikey === 'string'
@@ -29,12 +27,7 @@ export default (req: express.Request, res: express.Response, next: express.NextF
       ? req.headers.authorization.split(' ')[1]
       : '';
 
-  console.log('token:', token);
-  console.log('keys', keys);
-
-  if (keys.includes(token)) {
-    return next();
-  }
+  if (keys.includes(token)) return next();
 
   return unauthorized(res);
 };
