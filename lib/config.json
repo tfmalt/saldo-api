@@ -2,7 +2,8 @@
   "users": [["user@example.org", "regular expression string"]],
   "keys": ["Add valid api keys here"],
   "accounts": {
-    "identifier": ["add account ids here"]
+    "identifier": ["add account ids here"],
+    "felles": ["add identifiers here"]
   },
   "expenses": {
     "key": "key",
