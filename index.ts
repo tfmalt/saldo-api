@@ -1,4 +1,5 @@
-import express from 'express';
+import {Express, Request, Response, NextFunction} from 'express';
+import express from "express";
 import helmet from 'helmet';
 import winston from 'winston';
 import cors from 'cors';
@@ -10,7 +11,7 @@ import minilog from './lib/minilog';
 import chalk from 'chalk';
 
 import { name, version, author } from './package.json';
-import { Response } from 'express-serve-static-core';
+
 
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
@@ -23,7 +24,7 @@ const logger = expressWinston.logger({
   colorize: false
 });
 
-const app = express();
+const app: Express = express();
 
 app.use(helmet());
 app.use(logger);
@@ -73,7 +74,7 @@ function handleServerError(res: Response) {
  * API endpoint for routing to the budget expenses api.
  */
 app.options('/budget/expenses', cors());
-app.get('/budget/expenses', cors(), (req, res) => {
+app.get('/budget/expenses', cors(), (req: Request, res: Response) => {
   return res
     .set('Location', `${expenses.url}?y=${req.query.y}&m=${req.query.m}&apikey=${expenses.key}`)
     .set('Access-Control-Allow-Origin', '*')
