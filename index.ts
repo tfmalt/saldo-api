@@ -32,7 +32,7 @@ app.disable('x-powered-by');
 
 minilog.info(chalk`Starting {cyan ${name}} version {cyan ${version}} by {yellow ${author}}`);
 
-if (!process.env.SBANKEN_CLIENTID || !process.env.SBANKEN_SECRET || !process.env.SBANKEN_CUSTOMERID) {
+if (!process.env.SBANKEN_CLIENTID || !process.env.SBANKEN_SECRET) {
   minilog.error('sbanken credentials not configured properly. exiting.');
   process.exit(0);
 }
@@ -103,7 +103,7 @@ app.get('/balance', (req, res) => {
     .accounts()
     .then((data) => data.items.filter((i) => i.name.match(users[user])))
     .then((data) => {
-      return data.map((i) => {
+      return data.map((i: any) => {
         delete i.ownerCustomerId;
         delete i.creditLimit;
         return i;

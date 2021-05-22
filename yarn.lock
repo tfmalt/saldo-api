@@ -174,6 +174,14 @@ chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+chalk@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.1.tgz#c80b3fab28bf6371e6863325eee67e618b77e6ad"
+  integrity sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==
+  dependencies:
+    ansi-styles "^4.1.0"
+    supports-color "^7.1.0"
+
 color-convert@^1.9.0, color-convert@^1.9.1:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
@@ -234,10 +242,10 @@ combined-stream@^1.0.8:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-6.0.0.tgz#2b270da94f8fb9014455312f829a1129dbf8887e"
-  integrity sha512-s7EA+hDtTYNhuXkTlhqew4txMZVdszBmKWSPEMxGr8ru8JXR7bLUFIAtPhcSuFdJQ0ILMxnJi8GkQL0yvDy/YA==
+commander@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
+  integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
 
 content-disposition@0.5.3:
   version "0.5.3"
@@ -569,14 +577,14 @@ node-fetch@^2.5.0:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
 
-node-sbanken@^2.3.x:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/node-sbanken/-/node-sbanken-2.3.1.tgz#630f45c074216eb7c411b605af005db429848720"
-  integrity sha512-2KkOc9BcbX2/mmtMHViKMdtc7Ohnx0xRhv0Dw+hxgX7b3AJ7PP87113z/OT4OaCKjI/OId52TsvbHJUbC08mkQ==
+node-sbanken@2.5.x:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/node-sbanken/-/node-sbanken-2.5.0.tgz#21887d9fbb27516699455b362a8c56d0c7705315"
+  integrity sha512-ZIp+Qx4n0ineWKesJks6hgtFtCb0xzZm6piuqO+qHpQC2/g460ew1Sxbnt0Gzfot3V57BkbbOXpUy7o4j3u4og==
   dependencies:
     btoa "^1.2.1"
-    chalk "^4.1.0"
-    commander "^6.0.0"
+    chalk "^4.1.1"
+    commander "^7.2.0"
     node-fetch "^2.5.0"
 
 object-assign@^4:
