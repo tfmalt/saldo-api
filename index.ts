@@ -12,7 +12,6 @@ import chalk from 'chalk';
 
 import { name, version, author } from './package.json';
 
-
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
 const logger = expressWinston.logger({
@@ -72,8 +71,9 @@ function handleServerError(res: Response) {
 
 /**
  * API endpoint for routing to the budget expenses api.
- */
-app.options('/budget/expenses', cors());
+*/
+const corsOpts = cors({});
+app.options('/budget/expenses', corsOpts);
 app.get('/budget/expenses', cors(), (req: Request, res: Response) => {
   return res
     .set('Location', `${expenses.url}?y=${req.query.y}&m=${req.query.m}&apikey=${expenses.key}`)
