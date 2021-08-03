@@ -134,7 +134,7 @@ app.get('/transactions/:account', async (req, res) => {
     to: req.query.hasOwnProperty('to') ? new Date(req.query.to as string) : undefined // new Date()
   };
 
-  if (typeof options.to !== 'undefined' && options.to > new Date()) {
+  if (options.to instanceof Date && options.to > new Date()) {
     return handleBadRequest(res, 'To date cannot be greater than todays date');
   }
 
