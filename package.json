@@ -1,6 +1,6 @@
 {
   "name": "saldo-api",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "A simple api backend to provide some bank account information",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
