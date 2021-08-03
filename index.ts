@@ -1,5 +1,5 @@
-import {Express, Request, Response, NextFunction} from 'express';
-import express from "express";
+import { Express, Request, Response, NextFunction } from 'express';
+import express from 'express';
 import helmet from 'helmet';
 import winston from 'winston';
 import cors from 'cors';
@@ -11,6 +11,7 @@ import minilog from './lib/minilog';
 import chalk from 'chalk';
 
 import { name, version, author } from './package.json';
+import xFrameOptions from 'helmet/dist/middlewares/x-frame-options';
 
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
@@ -40,10 +41,10 @@ if (!process.env.SBANKEN_CLIENTID || !process.env.SBANKEN_SECRET) {
 const sbanken = new sb.Sbanken(
   {
     clientId: process.env.SBANKEN_CLIENTID,
-    secret: process.env.SBANKEN_SECRET,
-    customerId: process.env.SBANKEN_CUSTOMERID
+    secret: process.env.SBANKEN_SECRET
+    // customerId: process.env.SBANKEN_CUSTOMERID || ''
   },
-  { verbose: true }
+  { verbose: false }
 );
 
 minilog.info(chalk`Initalized {cyan Sbanken SDK} version {cyan ${sbanken.version}}`);
@@ -71,7 +72,7 @@ function handleServerError(res: Response) {
 
 /**
  * API endpoint for routing to the budget expenses api.
-*/
+ */
 const corsOpts = cors({});
 app.options('/budget/expenses', corsOpts);
 app.get('/budget/expenses', cors(), (req: Request, res: Response) => {
@@ -132,10 +133,10 @@ app.get('/transactions/:account', async (req, res) => {
 
   const options = {
     from: req.query.hasOwnProperty('from') ? new Date(req.query.from as string) : new Date(),
-    to: req.query.hasOwnProperty('to') ? new Date(req.query.to as string) : new Date()
+    to: req.query.hasOwnProperty('to') ? new Date(req.query.to as string) : undefined // new Date()
   };
 
-  if (options.to > new Date()) {
+  if (typeof options.to !== 'undefined' && options.to > new Date()) {
     return handleBadRequest(res, 'To date cannot be greater than todays date');
   }
 
@@ -155,14 +156,14 @@ app.get('/transactions/:account', async (req, res) => {
   }
 });
 
-async function getTransactions(options: { from: Date; to: Date }): Promise<any[]> {
+async function getTransactions(options: { from: Date; to?: Date }): Promise<any[]> {
   const accountlist = (await sbanken.accounts()).items;
   const result = accounts.felles.map(async (id: string) => {
-    const data = await sbanken.transactions({
-      accountId: id,
-      from: options.from,
-      to: options.to
-    });
+    const tOptions: sb.TransactionsOptions = { accountId: id, from: options.from };
+    if (options.to instanceof Date) {
+      tOptions.to = options.to;
+    }
+    const data = await sbanken.transactions(tOptions);
 
     return data.items.map((t: any): any => {
       const account = accountlist.find((i: sb.Account) => i.accountId === id);
