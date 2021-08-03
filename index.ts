@@ -11,7 +11,6 @@ import minilog from './lib/minilog';
 import chalk from 'chalk';
 
 import { name, version, author } from './package.json';
-import xFrameOptions from 'helmet/dist/middlewares/x-frame-options';
 
 const port = Number(process.env.PORT) || 3000;
 const host = '0.0.0.0';
@@ -42,7 +41,6 @@ const sbanken = new sb.Sbanken(
   {
     clientId: process.env.SBANKEN_CLIENTID,
     secret: process.env.SBANKEN_SECRET
-    // customerId: process.env.SBANKEN_CUSTOMERID || ''
   },
   { verbose: false }
 );
