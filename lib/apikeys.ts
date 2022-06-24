@@ -6,7 +6,7 @@
 import { keys } from './Config';
 import express, { NextFunction } from 'express';
 
-function unauthorized(res: express.Response): void {
+function unauthorized(res: express.Response): any {
   return res
     .set('Access-Control-Allow-Origin', '*')
     .status(401)
